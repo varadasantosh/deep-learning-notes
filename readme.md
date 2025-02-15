@@ -52,10 +52,10 @@
    7.  Next step is to perform Matrix multiplication between the probabilities(Normalizing the dot product between Q,K) calculated in earlier step using Softmax & the **V** Values matrix whose size is **(batch_size,seq_len,n_dim)**, hence these both matrices need to be moved from HBM to On-Chip memory
    8.  Matrix multiplication is performed between Softmax Values & **V** values matrix to get the final attention score
 
-   From the above steps we can infer that majorly the there are two types of operations one being Matrix Multiplications which is FLOPS(Floating Point Operations), other is data movement between 
-   DRAM(HBM) to SRAM (On-Chip Memory), due to massive parallel processing capabilities of GPU Floating point operations are calculated faster , once this is done threads present inside the 
-   **SM** are idle until they get new set of instructions and Data on which these instructions need to be performed , **this makes these operations Memory bound as the time taken to move the 
-   data between SRAM (On Chip Memory) & DRAM  is more than the time taken to perform FLOPS (Matrix Multiplicaton in this case)**
+   From the above steps we can infer that majorly the there are two types of operations one being Matrix Multiplications which is FLOPS(Floating Point Operations), other is data movement       
+   between DRAM(HBM) to SRAM (On-Chip Memory), due to massive parallel processing capabilities of GPU Floating point operations are calculated faster , once this is done threads present inside 
+   the  **SM** are idle until they get new set of instructions and Data on which these instructions need to be performed , **this makes these operations Memory bound as the time taken to move 
+   the data between SRAM (On Chip Memory) & DRAM  is more than the time taken to perform FLOPS (Matrix Multiplicaton in this case)**
    
    
    Flash Attention address this problem by dividing the matrices into multiple blocks , and peforms fusing of kernal operations ( Kernels are functions) , fusing Kernel operations can be 
@@ -70,18 +70,24 @@
    V matrix, as these data is passed through multiple kernel functions within SRAM we don't store the intermediate results on HBM.
 
    
-   But here lies the major challenge, inorder to calculate the Softmax we need all the values at once to perfrom sum operation (denominator), which is then divided by each value in the 
-   attention matrix, as we are dividing the matrix into multiple blocks and pefroming kernel fusion on these blocks and updating the blocks of result matrix incrementally, which means 
-   with this approaching of breaking the matrix into multiple blocks and applying kernel fusion to perform multiple operations , makes it impossible to softmax calculation at once on the entire 
-   matrix ,but this issues was solved by NVIDIA researchers using tiling technique which calculates the online softmax, using this we can calculate the softmax for current block or tile , 
-   when this is being merged with other block we calculate the softmax on the blocks being merged, we continue this operation until we have single matrix
+   But here lies the major challenge, inorder to calculate the Softmax we need all the values at once to perfrom sum operation  which is required to calculate(denominator), this is required 
+   as we need to divide each element of the dot matrix by sum of all the elments(which is Softmax formula) , as we are dividing the matrix into multiple blocks to perfrom kernel fusion 
+   (chaining kernel functions like Dot product, masking and Softmax ) calculating the total sum is not possible ,  hence we need a way to calculate the softmax for these batches accurately,
+   fortunately this can be addressed calculatin online softmax, which uses tiling technique which is metioned in NVIDIA researcher [paper](https://arxiv.org/abs/1805.02867), this approach 
+   allow us to calculate the softmax for individual blocks and when we are merging them we incrementally calculate the final softmax using the formaula mentioned below until we reach final 
+   merging on all the blocks 
+   
+   <img width="492" alt="image" src="https://github.com/user-attachments/assets/c5f58700-db05-4027-ab1b-a0814ec769cc" />
 
 
    $$
    \text{softmax}(x_i) = \frac{\exp(x_i)}{\sum_{j=1}^{n}\exp(x_j)}
    $$
    
+  # Few intresting points to note here is the number of FLOPS (Floating point operations) are more in number than the Self Attention , but the time taken is less compared to Self Attention as we are working on small cunks which makes it faster move the data between HBM and On-Chip memory and On-chip Memory to HBM memory , as we are dividing into multiple chunks this also allows us to increase Sequence Lenght which is Context Length of model, hence we can have more context length for the training model. 
 
+  # [Online Softmax Calculation](https://github.com/varadasantosh/deep-learning-notes/blob/tensorflow/Flash_Attention_Calculations(Online_Softmax).ipynb) 
+   
    Reference Links:-
 
    1. https://horace.io/brrr_intro.html
