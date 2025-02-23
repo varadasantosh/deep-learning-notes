@@ -69,10 +69,66 @@ of parameters, if the model can't be fit into memory **Distributed Data Parallel
     Here the parameters, Gradients & Optimizer States are split across multiple GPU's meaning if we need to calcualte Dot Product W.X, We split these matrices across 4 GPU's and calculate
     the dot product across different GPU's and bring the Parameters to one GPU for calculating the Gradients for Backward Propagation using NCCL Operations
 
- - Mix Data & Model Parallelism
 
-    In this approach we split the Model Vertically and interleave the different Layers on different GPU's , during this process Layer 1 is trained by GPU-1 On Batch-1, the same Batch now 
-    passed onto GPU-2 for processing next layer etc. Once the GPU-1 completes the processing of Batch-1, instead of keeping this idle we feed next mini Batch to GPU-1.
+# Steps performed during FSDP
+
+Let us consider the Model Architure with below configuration
+```
+. Number of GPU's- 4
+. Number of Layers - 2
+. Number of Neurons in each Hidden Layer-4 
+. Input Features - 4
+. Total Number of rows input data - 12
+. 12 rows divide across 4 GPU - Each GPU gets batch of 3 rows
+```
+Two Layers , each with Matrices $W_{1}$, $W_{2}$ with below dimensions
+- $W_{1}$ -  4 * 4 (Input Features- 4, Number of Neurons in Each Layer-4)
+- $W_{2}$ -  4 * 4 (Output from Activation of First Layer, Number of Neurons in Each Layer-4)
+
+
+# Layer 1 - Forward Propagation:
+- Input Data on Each GPU , each GPU has data of Batch size of 3 Rows & 4 Columns(features) 3 * 4 matrix
+- $w_{1}$ is split across 4 GPU's , each GPU has weight matrix of size 1 * 4
+- Peform **All Gather** Collective Operation to get all the Weights of the corresponding Shard & Layer
+- After **All Gather** Operation all GPU's has full weight matrix of Layer-1 to proceed with **GEMM** like mentioned below
+- GPU-0 - $\hat{y_{0}}$ = $w_{1}$ * $x_{0}$ + $b_{1}$
+- GPU-1 - $\hat{y_{1}}$ = $w_{1}$ * $x_{1}$ + $b_{1}$
+- GPU-2 - $\hat{y_{2}}$ = $w_{1}$ * $x_{2}$ + $b_{2}$
+- GPU-3 - $\hat{y_{3}}$  = $w_{1}$ * $x_{3}$ + $b_{3}$
+- After calculating **GEMM** and **Activations**, Weights gathered from other GPU's for the corresponding shard are freed, each GPU would remain
+  with weight matrix of 1 * 4 size
+- Activations are stored in each GPU, these are required while calculating Gradients during Backward Propagation
+
+# Layer 2 - Forward Propagation: 
+- Steps would remain same like in Layer-1
+- Output of Layer-1 would be passed as input to Layer-1
+- Output of Layer-1 is of Size 3 * 4 ($x_{0}$ =  3 * 4  & $w_{1}$ =  4 * 4 )
+- Layer2 has 4 features as input and it has 4 hidden Layers hence the weight matrix $w_{2}$ is of shape 4 * 4
+- Like in Layer-1 $w_{2}$ is split across 4 GPU's , each GPU has weight matrix of size 1 * 4
+-  Peform **All Gather** Collective Operation to get all the Weights of the corresponding Shard & Layer
+-  After **All Gather** Operation all GPU's has full weight matrix of Layer-2 to proceed with **GEMM** like mentioned below
+-  After calculating **GEMM** and **Activations**, Weights gathered from other GPU's for the corresponding shard are freed,
+   each GPU would remain with weight matrix of 1 * 4 size
+- Activations are stored in each GPU, these are required while calculating Gradients during Backward Propagation
+
+# Layer2 - Backward Propagation:
+- Peform **All Gather** Operation on Layer-2 for gathering all weights of the Shard & Layer, this is required for Gradient Calculation
+- After **All Gather** Weights of Layer-2 are present on all the GPU's allowing us to perform Gradient Calculations
+- Each GPU perform Gradient Calculation Locally
+- But the Gradients calculated on each GPU are partial,as each of them are working on different batch of data, hence the gradient needs to be
+  aggregated
+- to achieve the aggregation of gradients from all GPU's and sending the relevant gradients for each GPU to be adjust we take help of
+  **Reduce Scatter** operation (Refer to NCCL Operations)
+- After the **Reduce Scatter** Operation each GPU now have the Gradients for Layer-2
+
+# Layer1 - Backward Propagation:
+
+
+    
+  
+  
+   
+
 
    
    
