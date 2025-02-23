@@ -134,7 +134,12 @@ Two Layers , each with Matrices $W_{1}$, $W_{2}$ with below dimensions
 - After the **Reduce Scatter** Operation each GPU now have the Gradients for Layer-1 each Gradient matrix of size  1 * 4
 - This gradients are now would be used to perform Optimizer Update to adjust the weights
 
-    
+**Important Note**    
+ During the Process the Weight Updates are performed after Complete Forward Pass & Backward Pass, Though the Gradeints for
+ Layer-2 are calculated Before Layer-1 Gradeints, we can't update Weights for Layer-1 until the Gradeints for Layer-1 are calculated
+ because if we update the Weights for Layer-2 , it would impact the Caclulation of Gradients for Layer-1 hence the weights are updated
+ only after completed Backward Pass through from last layer to first layer, after this cycle the Weights can be updated across all the 
+ layers
   
   
    
