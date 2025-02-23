@@ -119,10 +119,20 @@ Two Layers , each with Matrices $W_{1}$, $W_{2}$ with below dimensions
   aggregated
 - to achieve the aggregation of gradients from all GPU's and sending the relevant gradients for each GPU to be adjust we take help of
   **Reduce Scatter** operation (Refer to NCCL Operations)
-- After the **Reduce Scatter** Operation each GPU now have the Gradients for Layer-2
+- After the **Reduce Scatter** Operation each GPU now have the Gradients for Layer-2 each Gradient matrix of size  1 * 4
+
 
 # Layer1 - Backward Propagation:
-
+- Backward Propagation Remains as above 
+- Peform **All Gather** Operation on Layer-1 for gathering all weights of the Shard & Layer, this is required for Gradient Calculation
+- After **All Gather** Weights of Layer-1 are present on all the GPU's allowing us to perform Gradient Calculations
+- Each GPU perform Gradient Calculation Locally
+- But the Gradients calculated on each GPU are partial,as each of them are working on different batch of data, hence the gradient needs to be
+  aggregated
+- to achieve the aggregation of gradients from all GPU's and sending the relevant gradients for each GPU to be adjust we take help of
+  **Reduce Scatter** operation (Refer to NCCL Operations)
+- After the **Reduce Scatter** Operation each GPU now have the Gradients for Layer-1 each Gradient matrix of size  1 * 4
+- This gradients are now would be used to perform Optimizer Update to adjust the weights
 
     
   
