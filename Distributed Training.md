@@ -5,7 +5,7 @@
 
 Before exploring the different techniques of Distributed Training, it is essential to understand why it is needed.
 
-With advancements in both technology and hardware, the size of deep learning models has grown significantly. Modern Large Language Models (LLMs) are trained on massive datasets and have billions of parameters, making them too large to fit within the memory of a single GPU.
+With advancements in both technology and hardware & availability of data  the size of deep learning models has grown significantly. Modern Large Language Models (LLMs) are trained on massive datasets and have billions of parameters, making them too large to fit within the memory of a single GPU.
 
 If such models were trained on a single GPU, the process could take hundreds of years to complete. Distributed training techniques, such as Fully Sharded Data Parallel (FSDP), help overcome these limitations by distributing the workload across multiple GPUs. This not only accelerates training but also enables the development of increasingly larger and more capable models. The more data a model can learn from, the better its performance.
 
