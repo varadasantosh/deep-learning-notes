@@ -142,11 +142,10 @@ Two Layers , each with Matrices $W_{1}$, $W_{2}$ with below dimensions
  layers
   
   
-   
+# FSDP Workflow:-
+  ---------------
+  ![image](https://github.com/user-attachments/assets/3b773598-b5b8-457c-aa45-c6995935c641)
 
-
-   
-   
 
 
 
