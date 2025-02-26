@@ -11,6 +11,7 @@ LLM Inference process can be mainly devided into two stages **Prefill** & **Deco
  - batch:- Number of Prompts Batched together
  
 # Paged Attention
+ https://training.continuumlabs.ai/inference/why-is-inference-important/paged-attention-and-vllm
 # Continuous Batching
 # Prefill
 # Quantization
