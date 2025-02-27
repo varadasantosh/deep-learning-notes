@@ -43,11 +43,48 @@
 
    ![image](https://github.com/user-attachments/assets/862f1d2e-7041-4735-b62f-591d238c0a2a)
 
+   https://huggingface.co/blog/not-lain/kv-caching
+
  
 # Paged Attention
  https://training.continuumlabs.ai/inference/why-is-inference-important/paged-attention-and-vllm
-# Continuous Batching
+ 
+# Batching
+  Batching is the process of combining Multiple Requests or Prompts for processing , ORCA - Distributed Serving System for Transformer-Based Generative Models proposed two techniques for
+  batching **Static Batching** & **Continuous Batching** 
+  - Static Batching as the name indicates at a given time few requests(ex:-**64**) are combined togehter and sent to GPU for Inferencing ,Once the processing for these requests are completed
+    the next batch is loaded to GPU, this mode of batching is more simple and easy to process also throughput is higher , one disadvantage with the static batching is if the Batch has requests 
+    which leads to different sizes of sequences, though one of the sequence generation is completed , meaning the prompt completion of one user is completed the output is not yet sent to the 
+    user ,as the other requests are still being processed , once all the requests are done with processing , the results are offloaded from GPU to CPU, thus it can hamper user experience. This 
+    also leads to inefficient usage of GPU , as few cores of GPU sits idle
+  - Continous Batching address the issues that are arised in Static Batching, in this process when one of the requests are done with generation of sequence, a new sequence or request will
+    replace the completed sequence , while other requests in the batch are still being processed.This helps in better utilizatio of GPU , also helps to provide the results as early as possible
 
+    Determing the Batch size can be critical , it depends on factors like resources we have, for instance if we consider each request as 1 batch which is not efficient way to use the resources, 
+    we can increase this until we reach optimum usage, some experiments indicatea that Batch size of 64 can produce good Through put with acceptable Levels of Latency but again this size should
+    be determined through several experiments based on the computing resources
+
+    Though below representation of Contiuous Batching is misleading, one important thing to be aware is for Batch of requests to be combined , all the lenghts should be same where as the prompt
+    might be of different lenght and generated sequence lenghts also could be of different sizes, suppose if we have two requests like below it is not posssible to batch them togehter due to
+    varying lengths, hence there are few operations that depends on the uniform batch size where few operations does not depend on the uniformity of batch size, hence these operations like
+    matrix multiplications which expects uniform batch size can't be handled in batch and thus processed in sequence , the other set of operations which are independent of dimension they
+    can be processed in batch, this process is known as Selective Batching, this is form of continuous baching where a completed request is replaced by new request
+
+    - Request 1, K and V cache shape is [D, 4, D/H] (4 tokens),
+    - Request 2, K and V cache shape is [D, 7, D/H] (7 tokens),
+
+    Static Batching
+    ----------------
+    ![image](https://github.com/user-attachments/assets/cbf55f1a-28ee-4c69-9a4a-9c4e88f597ed)
+
+    Continuous Batchining
+    -------------------
+    ![image](https://github.com/user-attachments/assets/6f36fc62-5085-411c-be03-9476d8f7719d)
+
+    Ref:- https://insujang.github.io/2024-01-07/llm-inference-continuous-batching-and-pagedattention/#fn:1
+    
+    
+    
 # Quantization
 # Speculative Decoding
 # Inference Engines
