@@ -3,12 +3,9 @@
 - https://training.continuumlabs.ai/inference/why-is-inference-important/paged-attention-and-vllm
   
 # Inference Process:
-  Large Language Model (LLM) Inference process mainly comprises of two pahses **Prefill** & **Decode**, each phase has different computaional requiements according to the way the operations 
-  performed in phase , for instance in the Prefill phase we complete the forward pass using all the tokens part of the initial prompt , which includes mutiple FLOPS but major contribution is 
-  coming from calculating Attention in all those layers part of Model  Architecture which is a GEMM operation (Matrix Multiplication). Hence this is computationally intensive opertation and 
-  considered as compute bound operation.
+  The inference process for a Large Language Model (LLM) is divided into two  phases: Prefill and Decode. Each phase has distinct computational requirements based on the specific operations 
+  performed during that stage. Below are the high level steps performed during Inference
 
-  Decode phase , during this phase 
   
   - Model Weights or Parameters are Loaded to GPU 
   - Prefill phase process the Input Prompt and generate the tokens for the user prompt, generated tokens are loaded to GPU for single forward pass through the model,
