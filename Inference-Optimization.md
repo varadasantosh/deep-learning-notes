@@ -86,6 +86,32 @@
     
     
 # Quantization
+  Quantization is the process of reducing the precision of a model weights, this means mapping high-precision weights
+  (typically in FP32 format) to lower-precision formats such as FP16, bfloat16, INT16, or INT8., one example is Converting High Resolution
+  Image to lower Resolution Image such as an Image with 16 bits per color channel , convert it to Image with 8 bits per color channel 
+  reduces memory foot print required for the image, but at the same time the image quality is compramised. Quantization has below mentioned
+  benefits and issues.
+
+  Benefits
+  ---------
+  - Reduces Memory Footprint , Model with INT8 precision requires much less memory than the one with FP32 precision, this
+    allow us to deploy models on smaller devices.
+  - Lower Computational Cost, Many operations are faster on loser precision data types like INT8. Reduced precision leads
+    to faster inference times.
+  - Due to reduction in size of the model weights , data transfer between Off Chip Memory (VRAM) & On-Chip Memory is faster
+    with in the same GPU and between other GPU's  during various operations performed such as All Gather, All Reduce, Reduce
+    Scatter etc...
+
+  Trade-offs
+  ----------
+   Though Quantization brings few benefits outlined above, important thing to be aware is that this process introduces
+   loss of precision.Though dequanization process to restores the values to actual precision it can't be compltely restored
+   back to the original value. This leads to less accurate Model. There are various Quantization techniques and precisions.
+   Choosing the right method depends on the specific requirements and constraints related to model performance, memory
+   and computational costs.
+
+
+  
 # Speculative Decoding
 # Inference Engines
   - NVIDIA Triton
