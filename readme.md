@@ -19,6 +19,7 @@
    https://medium.com/@DataDry/decoding-rotary-positional-embeddings-rope-the-secret-sauce-for-smarter-transformers-193cbc01e4ed
 
 # SELF-ATTENTION
+   - https://github.com/jessevig/bertviz
 
 # MULTIHEAD-ATTENTION
 
