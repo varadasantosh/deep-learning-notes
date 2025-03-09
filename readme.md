@@ -62,6 +62,9 @@
        Seq RNN models
 
        Scaled Dot Product Attention: -   $\left( \frac{QK^T}{\sqrt{d_k}} \right)$
+
+       ![image](https://github.com/user-attachments/assets/25c3e110-f985-4d3f-a7ab-78ee290b7dbc)
+
        
     5. Result of Scaled Dot Product Attention is passed through Softmax to normalize the attention scores
              
@@ -85,8 +88,85 @@
        p_attn = F.softmax(scores, dim = -1)
        return torch.matmul(p_attn, value), p_attn
      ```
-    
-     
+     # Visualizing Self Attention using Llama Model:-
+      
+      - Download the Llama Model from Hugging Face
+
+        ```
+           from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM
+           import torch
+         
+           model_name= "meta-llama/Llama-3.2-3B-Instruct"
+           tokenizer = AutoTokenizer.from_pretrained(model_name)
+           model = AutoModel.from_pretrained(model_name, output_attentions=True)
+        ```
+      - Llama Model Architecture , Llama model being Decoder only we can see there are only 28 Decoder Layers, no encoder layers
+        ```
+        LlamaModel(
+           (embed_tokens): Embedding(128256, 3072)
+           (layers): ModuleList(
+             (0-27): 28 x LlamaDecoderLayer(
+               (self_attn): LlamaAttention(
+                 (q_proj): Linear(in_features=3072, out_features=3072, bias=False)
+                 (k_proj): Linear(in_features=3072, out_features=1024, bias=False)
+                 (v_proj): Linear(in_features=3072, out_features=1024, bias=False)
+                 (o_proj): Linear(in_features=3072, out_features=3072, bias=False)
+               )
+               (mlp): LlamaMLP(
+                 (gate_proj): Linear(in_features=3072, out_features=8192, bias=False)
+                 (up_proj): Linear(in_features=3072, out_features=8192, bias=False)
+                 (down_proj): Linear(in_features=8192, out_features=3072, bias=False)
+                 (act_fn): SiLU()
+               )
+               (input_layernorm): LlamaRMSNorm((3072,), eps=1e-05)
+               (post_attention_layernorm): LlamaRMSNorm((3072,), eps=1e-05)
+             )
+           )
+           (norm): LlamaRMSNorm((3072,), eps=1e-05)
+           (rotary_emb): LlamaRotaryEmbedding()
+         )
+        ```
+      - Tokenize the Input Sentence & Pass it through the Llama Model
+        
+        ```
+          
+         import torch
+         
+         text = "the financial bank is located on river bank"
+         inputs = tokenizer(text, return_tensors="pt").to("cuda")
+         token_ids = inputs.input_ids[0]
+         tokens = tokenizer.convert_ids_to_tokens(token_ids)
+         model = model.to("cuda")
+         with torch.no_grad():
+             inputs = inputs.to("cuda")
+             outputs = model(**inputs)
+
+        ```  
+     - Get The Attention Matrix from the Outputs, there are 28 Layers , we can see the below dimensions of the `attention_matrix` of length 28 & each layer's attention matrix is of shape               (1,24,9,9) - This is because Llama Model has 24 Heads (This refers to Multi Head attention) and sequence length of tokens that we passed is of length 9 hence the dimension of each head          is 9*9 
+       
+       ```
+          attention_matrix = outputs.attentions
+       ```
+       <img width="233" alt="image" src="https://github.com/user-attachments/assets/d7219113-ed31-4c54-b36d-366426cec86b" />
+
+       
+     - Get Attentions from final layer, calculate the avg attention scores across all heads and plot the heatmap to find relation ship, though the below we can't find stronger contextual
+       relation ship between tokens like financial & bank , river & bank we can see them when we go through individual heads of multihead attention, but one thing we can observe in the
+       attention score heatmap is all the elements above diagonal are zero. This is because the Decoder part of model has casual attention which prevents each token from attending to future    
+       tokens of the sequence, this is important as transformers do the self attention in parallel, where as in RNN the attention always sequentially , hence we don't step on to future
+       tokens, in transformers this is not the case as we are processing all the tokens in parallel.
+
+       ```
+            import seaborn as sns
+            import matplotlib.pyplot as plt
+            avg_attn =attention_matrix[27][0].mean(dim=0)
+            sns.heatmap(avg_attn.cpu(), cmap="viridis",annot=True,fmt=".2f",xticklabels=tokens,yticklabels=tokens )
+            plt.title(f"Attention Matrix (Layer 28)",fontdict={'fontsize':25})
+            plt.show()
+       ```
+       <img width="435" alt="image" src="https://github.com/user-attachments/assets/2e553cb2-22cc-42b6-b42d-fab81d98d13c" />
+
+
  
 # MULTIHEAD-ATTENTION
 
