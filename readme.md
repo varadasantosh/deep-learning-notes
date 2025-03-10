@@ -53,12 +53,24 @@
     3. Pass the Embeddings tokens through  4 different Linear Layers to generate Q,K,V & O matrices, each linear layer has its corresponding weight matrices, $W_{Q}$ , $W_{K}$ $W_{V}$ & $W_{O}$
        these weights are learned through the training process.
        
-       - X * $W_{Q}$ = Q - Query Vector
-       - X * $W_{K}$ = K - Key Vector
+       - X * $W_{Q}$ = Q - Query Vector 
+       - X * $W_{K}$ = K - Key Vector  
        - X * $W_{V}$ = V - Value Vector
        - X * $W_{O}$ = O - Output Vector
+
+       Dimensions:-
+       -----------
+       - X -> T  * $d_{model}$
+       - $W_{Q}$ -> $d_{model}$ * $d_{k}$
+       - $W_{K}$ -> $d_{model}$ * $d_{k}$
+       - $W_{V}$ -> $d_{model}$ * $d_{k}$
+       - $W_{O}$ -> $d_{model}$ * $d_{k}$
          
-    4. Calculate the Scaled Dot Product Between Q (Query) & K (Key) vectors to find how each token relates to other token , this is simialr to calculation of alignment scores in earlier Seq-to- 
+       - T - Sequence Length
+       - $d_{model}$  - Length of Embeddings
+       - $d_{k}$ - Output dimensions of $W_{Q}$,$W_{K}$ & $W_{V}$, this can be same as $d_{model}$ as well
+   
+    5. Calculate the Scaled Dot Product Between Q (Query) & K (Key) vectors to find how each token relates to other token , this is simialr to calculation of alignment scores in earlier Seq-to- 
        Seq RNN models
 
        Scaled Dot Product Attention: -   $\left( \frac{QK^T}{\sqrt{d_k}} \right)$
@@ -66,13 +78,13 @@
        ![image](https://github.com/user-attachments/assets/25c3e110-f985-4d3f-a7ab-78ee290b7dbc)
 
        
-    5. Result of Scaled Dot Product Attention is passed through Softmax to normalize the attention scores
+    6. Result of Scaled Dot Product Attention is passed through Softmax to normalize the attention scores
              
        Normalize Attention Scores:-  $\text{softmax}\left( \frac{QK^T}{\sqrt{d_k}} \right)$
 
-    6. Multiply these Attention scores with $W_{V}$ to calculate the weighted attentions
+    7. Multiply these Attention scores with $W_{V}$ to calculate the weighted attentions
     
-    7. Result of the Weighted attentions is thus multiplied by $W_{O}$ output projections.
+    8. Result of the Weighted attentions is thus multiplied by $W_{O}$ output projections.
 
      Below is the code snippet that explains above steps briefly, though this is not exactly what is being used in Transformer Architecture, as we use Multi Head Attention which we will discuss
      but this is the core of the  Attention calculation
@@ -116,6 +128,8 @@
          
              return weighted_values
      ```
+      ![image](https://github.com/user-attachments/assets/4e12e1ed-09fe-4719-be95-9e31cdba96c7)
+
      # Visualizing Self Attention using Llama Model:-
       
       - Download the Llama Model from Hugging Face
