@@ -78,15 +78,43 @@
      but this is the core of the  Attention calculation
 
      ```
-     def attention(query, key, value, mask=None):
-       "Compute 'Scaled Dot Product Attention'"
-       d_k = key.size(-1)
-       scores = torch.matmul(query, key.transpose(-2, -1)) \
-                / math.sqrt(d_k)
-       if mask is not None:
-           scores = scores.masked_fill(mask == 0, -1e9)
-       p_attn = F.softmax(scores, dim = -1)
-       return torch.matmul(p_attn, value), p_attn
+         import torch
+         import torch.nn as nn
+         from torch import Tensor
+         
+            
+         class Attention(nn.Module):
+           """Single attention head"""
+         
+           def __init__(self, embedding_dim: int, attention_dim: int):
+             super().__init__()
+             torch.manual_seed(0)
+         
+             # Initialising weights
+             self.wk = nn.Linear(embedding_dim, attention_dim, bias=False)
+             self.wq = nn.Linear(embedding_dim, attention_dim, bias=False) 
+             self.wv = nn.Linear(embedding_dim, attention_dim, bias=False) 
+         
+           def forward(self, embedded: Tensor) -> Tensor:
+             # calculating Query, Key and Value
+             q = self.wq(embedded)
+             k = self.wk(embedded) 
+             v = self.wv(embedded) 
+             
+             # calculating attention scores
+             attn_score = q @ torch.transpose(k, -2, -1) / (k.shape[-1] ** 0.5) # [batch_size, num_words, num_words]
+         
+             # below 2 lines is for masking in decoder block
+             upper_triangular  = torch.triu(attn_score, diagonal=1).bool()
+             attn_score[upper_triangular] = float("-inf")
+         
+             # applying softmax
+             attn_score_softmax = nn.functional.softmax(attn_score, dim = -1) # [batch_size, num_words, num_words]
+         
+             # getting weighted values by multiplying softmax of attention score with values
+             weighted_values = attn_score_softmax @ v # 
+         
+             return weighted_values
      ```
      # Visualizing Self Attention using Llama Model:-
       
