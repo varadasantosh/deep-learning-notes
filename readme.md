@@ -70,12 +70,13 @@
        - $d_{model}$  - Length of Embeddings
        - $d_{k}$ - Output dimensions of $W_{Q}$,$W_{K}$ & $W_{V}$, this can be same as $d_{model}$ as well
    
+   
     5. Calculate the Scaled Dot Product Between Q (Query) & K (Key) vectors to find how each token relates to other token , this is simialr to calculation of alignment scores in earlier Seq-to- 
        Seq RNN models
 
        Scaled Dot Product Attention: -   $\left( \frac{QK^T}{\sqrt{d_k}} \right)$
 
-       ![image](https://github.com/user-attachments/assets/25c3e110-f985-4d3f-a7ab-78ee290b7dbc)
+        ![image](https://github.com/user-attachments/assets/25cd0ce2-7734-4ecf-b0f3-e33cce29cd78)
 
        
     6. Result of Scaled Dot Product Attention is passed through Softmax to normalize the attention scores
