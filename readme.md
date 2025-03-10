@@ -130,7 +130,7 @@
              return weighted_values
      ```
 
-     # Visualizing Self Attention using Llama Model:-
+     # Visualizing Self Attention using Llama Model:- https://github.com/varadasantosh/deep-learning-notes/blob/tensorflow/Visualize_Self_%26_Multi_Head_Attention.ipynb
       
       - Download the Llama Model from Hugging Face
 
@@ -271,7 +271,7 @@ MultiHead Implemenation in Pytroch:-
 
 ```
 
-Visulization of MultiHead Attention using Llama Model:-
+Visulization of MultiHead Attention using Llama Model:- https://github.com/varadasantosh/deep-learning-notes/blob/tensorflow/Visualize_Self_%26_Multi_Head_Attention.ipynb
 -----------------------------
 We use the same Model & Input text we considered for Self Attention and look at one of the Heads of the Last layer in to see if they are able to attend contextual relation ships between different tokens
 
