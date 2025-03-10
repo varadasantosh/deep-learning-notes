@@ -212,6 +212,23 @@
 
  
 # MULTIHEAD-ATTENTION
+The Multi Head Attention is an extension to Self Attention, while the Self Attentin defined in Transfomers helps us to overcome limitations faced by RNN's, if we look at the above pitcutre we are calculating the attention over all heads of Llama Model , Multi Head Attention helps us to attend diferent aspects of elements in a sequence, in such case single weighted average is not
+good option, to understand different aspects we divide the Query, Key & Value matrices to different Heads and calculate the attention scores of each head, to calculate attention for each head
+we apply the same approach mentioned above,after the attention scores of each head are calculated we concatenate the attention scores of all the heads, this approach yeilds better results than
+finding the attention as a whole, during this process the weight matrices that are split are learned for each head.
+
+Llama Model(`Llama-3.2-3B-Instruct`) referred above has Embedding Dimensions of size - **3072** &  Number of Heads - **24**, thus our Query , Key & Values are split into 24 heads each head would
+be of size 3072/24 = 128
+
+Multihead(Q,K,V) =  Concat($head_{1}$, $head_{2}$,.....$head_{24}$)
+$head_{i}$ = Attention(Q$W_{i}$^Q, K$W_{i}$^K, V$W_{i}$^V)
+
+Below image captures the process of calculating MultiHead Attention
+
+![image](https://github.com/user-attachments/assets/67f3bb0b-1ac6-454e-ab5c-6975c368a9e3)
+
+
+
 
 # CROSS-ATTENTION
 
