@@ -39,6 +39,7 @@
 
 
 # Rotatory-Embeddings
+   https://towardsdatascience.com/understanding-positional-embeddings-in-transformers-from-absolute-to-rotary-31c082e16b26/
    https://medium.com/@DataDry/decoding-rotary-positional-embeddings-rope-the-secret-sauce-for-smarter-transformers-193cbc01e4ed
 
 # SELF-ATTENTION
