@@ -19,17 +19,28 @@
 
 # Positional-Embeddings
 
- Let us briefly recap how the sequence is passed as input to Transfomer Model, we know that models don't understand text hence we need to convert text to numbers such that models can 
- understand their meaning, hence we tokenize the sentence and convert them to IDs, if we simply pass these token ID's as is they don't cpature contextual information, it is just like Bag of 
- Words where each word represents one vector and does not take the context of other words around it , this is not how human brain process the text , we give importance to neighboruing words and
- also to the whole context, we can solve this by generating Embeddings using Embedding models like BERT , though we are able to add context to the words, the meaning of the word can 
- change according to its position in the sequence ex:- **Economoy is moving upward** , **Is Economy moving upward** both have same set of words and tokenization process results in same 
- set of  tokens in different order, **RNN** models process input in sequence they can inherently capture positional information also they only know the words that occured in the past , 
- but they are not aware of the future tokens, where as in **Transformer** models the processing is parallelized this brings challenge in preserving the order of the tokens , hence the 
- need of postional encodings.
+ Let us briefly recap how we provide input to Transfomer Model, we know that models(machines that execute the models) don't understand text 
+ hence we need to convert text to numbers such that models can interpret the numbers, we tokenize the sentence , tokenizing sentence is a 
+ breaking sentence to small words that tokenizer algorithm trained on , tokenizer is like dictionay of words, the sentence is broken into chunks
+ acconrding the tokenizers dictionary of words which is also known as `vocab_siz` ,  these tokens are still in text form, after breaking the 
+ sentnce to chunks , we convert the tokens to IDs. if we pass these token ID's as is they don't cpature contextual information, it is just like 
+ Bag of Words where each word represents one vector and does not take carry any meaning with it , inorder to embed meaning to these numbers we
+ pass these tokens to Embedding Models like `BERT` , these models are capable of generating embeddings which are dense representation of words 
+ we pass to the model . The Embedding Models helps us to add some meaning, but the meaning of this word can change according to its position in
+ the sentence , which is generally known as context , though position encodings directly can't help with finding context , they will help us in 
+ the process of going towards finding contextual meaning of the wrod by adding the position information to the Embedding  , for instance the 
+ below sentences have same set of words or tokens but their meaning is different due to the position of each word
+ ex:- **Economoy is moving upward** , **Is Economy moving upward**  
+ If we are using **RNN** models to process input in sequence they can inherently capture positional information also they only know the words 
+ that occured in the past, but they are not aware of the future tokens, where as in **Transformer** models the processing is parallelized this 
+ brings challenge in preserving the order of the tokens , hence the need of postional encodings.
  
- We need to inject the infomration of the position of the token along with Embeddings, In Original papaer on "Attention is All You Need" researchers proposed about encoding the position information along with Embeddings .To encode the position alon with Embedding there are two different choices one way is to learn the position encoding through training process, the downside is as these are learned parameters the model can't process sequence length that is more than what it is seen during training process. Other approach is to use fixed embeddings which are not learned during training process. If we can comeup with formula that allows us to encode the position of the token irrespective of the length of the sequence that helps us to process the sequence whose length that is not seen during the training .The original process proposed the Sin & Cosine functions with different frequencies using the **position** of the token and **embedding dimension** as they tried both approaches and don't see significatn differences in the accuracies of both approach  and fixed embeddings using Sin & Cosine function gives the 
- advantage of processing sequences longer than the sequences encountered during the training they prefered this approach.
+ We need to inject the infomration of the position of the token along with Embeddings, In Original papaer on "Attention is All You Need" 
+ researchers proposed about encoding the position information along with Embeddings , to encode the position along with Embedding there are two 
+ approaches **Learned Embeddings** & **Fixed Embeddings** the downside of learned parameters the model is , model can't process sequence length 
+ that is more than what it has seen during training process. 
+ 
+If we can comeup with formula that allows us to encode the position of the token irrespective of the length of the sequence that helps us to process the sequence whose length that is not seen during the training this is **Fixed Embeddings**.The original process proposed the Sin & Cosine functions with different frequencies using the **position** of the token and **embedding dimension** . Paper mentions that they tried both approaches and don't see significant differences in the accuracies of both approach.  Fixed embeddings using Sin & Cosine function gives the advantage of processing sequences longer than the sequences encountered during the training they prefered this approach.
    
  - $PE_{(pos,2i)} =  sin(pos/10000^(2i/d_{model}))$ (Even Dimensions of Embeddings)
  - $PE_{(pos,2i+1)} =  cos(pos/10000^(2i/d_{model}))$ (Odd Dimensions of Embeddings)
