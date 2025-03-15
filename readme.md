@@ -211,7 +211,68 @@ x_{2}sin\theta_{2} + y_{2}cos\theta_{2} \end{bmatrix}
 \
 $$    
 
-Inner product between them is P.Q 
+Dot product between them is $P^T$ .Q
+
+$$ P =
+\begin{bmatrix} x_{1}cos\theta_{1} -y_{1}sin\theta_{1} & x_{1}sin\theta_{1} + y_{1}cos\theta_{1} \end{bmatrix}
+\quad
+ Q =
+\begin{bmatrix} x_{2}cos\theta_{2} -y_{2}sin\theta_{2} \\
+x_{2}sin\theta_{2} + y_{2}cos\theta_{2} \end{bmatrix}
+\
+$$  
+
+
+$$ P^T.Q =
+\begin{bmatrix} (x_{1}cos\theta_{1} -y_{1}sin\theta_{1}) * (x_{2}cos\theta_{2} -y_{2}sin\theta_{2}) +  (x_{1}sin\theta_{1} + y_{1}cos\theta_{1}) *  
+(x_{2}sin\theta_{2} + y_{2}cos\theta_{2} \end{bmatrix})
+\
+$$  
+
+$$ P^T.Q =
+\begin{bmatrix} (x_{1} x_{2} cos\theta_{1} cos\theta_{2} - x_{1} y_{2} cos\theta_{1}sin\theta_{2} -  x_{2} y_{1}sin\theta_{1} cos\theta_{2} + y_{1} y_{2} sin\theta_{1} sin\theta_{2}) +  (x_{1} x_{2} sin\theta_{1} sin\theta_{2} + x_{1} y_{2} sin\theta_{1} cos \theta_{2} + x_{2} y_{1} cos\theta_{1} sin\theta_{2} + y_{1} y_{2} cos\theta_{1} cos\theta_{2}) \end{bmatrix}
+\
+$$  
+
+$$ P^T.Q =
+\begin{bmatrix} ( x_{1} x_{2} (cos\theta_{1} cos\theta_{2} + sin\theta_{1} sin\theta_{2}) + y_{1} y_{2} (cos\theta_{1} cos\theta_{2} + sin\theta_{1} sin\theta_{2})  + x_{1} y_{2} (sin\theta_{1} cos\theta_{2} - cos\theta_{1}sin\theta_{2}) -  x_{2} y_{1} (sin\theta_{1} cos\theta_{2} - cos\theta_{1} sin\theta_{2}) \end{bmatrix}
+\
+$$  
+
+$$ P^T.Q =
+\begin{bmatrix} ( x_{1} x_{2} cos(\theta_{1}-\theta_{2}) + y_{1} y_{2} cos(\theta_{1}-\theta_{2}) + x_{1} y_{2} (sin(\theta_{1}- \theta_{2}) -  x_{2} y_{1} (sin(\theta_{1}-\theta_{2}) \end{bmatrix}
+\
+$$  
+
+
+$$ P^T.Q =
+\begin{bmatrix} ( (x_{1} x_{2} + y_{1} y_{2}) cos(\theta_{1}-\theta_{2})  + (x_{1} y_{2} -  x_{2} y_{1}) (sin(\theta_{1}- \theta_{2})  \end{bmatrix}
+\
+$$
+
+$$ P^T.Q =
+\begin{bmatrix} ( (x_{1} x_{2} + y_{1} y_{2}) cos(\theta_{1}-\theta_{2})  + (x_{2} y_{1} -x_{1} y_{2}) (- sin(\theta_{1}- \theta_{2})  \end{bmatrix}
+\
+$$
+
+**The above can be re-written in terms of Rotation Matrix as below** ,**from this we can infer when we perform dot product between two vectors
+the relative position between them is captured which is represented by** $\theta_{1}-\theta_{2}$ this property is required when we calculate 
+Selft Attention we perform Dot product between Q(Query) & K(Key) vectors this helps in capturing the relation ship between the relative positions
+of the tokens
+
+$$
+P^T \cdot Q =
+\begin{bmatrix} x_{1} & y_{1} \end{bmatrix}
+\begin{bmatrix} 
+\cos(\theta_{1} - \theta_{2}) & -\sin(\theta_{1} - \theta_{2}) \\ 
+\sin(\theta_{1} - \theta_{2}) & \cos(\theta_{1} - \theta_{2}) 
+\end{bmatrix}
+\begin{bmatrix} x_{2} \\
+y_{2} \end{bmatrix}
+$$
+
+All of this what we discussed is applicable in 2Dimensional Space, but in practice the LLM have Embedding Dimensions of size 2048 & 3092 etc...
+the Rotary Embedding paper researchers applied the above principals of rotating the vector by multiplying the Rotation matrix R($\theta$) with the pairs of embeddings
 
    
 
