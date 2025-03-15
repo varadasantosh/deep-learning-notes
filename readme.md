@@ -75,6 +75,144 @@ If we can comeup with formula that allows us to encode the position of the token
    modifying the Embeddings, hence the birth of Relative Position Embeddings, though techincally we can capture the relative position of the
    embeddings using *N*N* matrix , this is computationally expensive. There are also few other issues with pure relative positional embeddings
    reasearchers came up with Rotary Positional Embeddings
+
+   Every data that we process in Machine/Deep Learning is considered a vector , like each feature is a vector  & output is a vector , a vector
+   has two components radial & angle components, radial component represents the magnitude of vector , angle represents angle it makes with the 
+   plane, rotary embeddings works on this principles of Complex Numbers and Operations on these vectors. Below is the math behind the Rotary 
+   Positional Embeddings
+
+   - Math Behind Rotary Positional Embeddings
+     
+     $i^2$ = -1 (Complex Number System)
+
+     When we multiply Complex Number by i , it results in rotating it by angle 90 degrees, here we represent our Embedding vector in Complex 
+     space and multiply it be rotational matrix the anle of the vector changes. Below is the equations of math how this works
+
+   - **Step-1**:-
+      <p>
+      <img width="373" alt="image" src="https://github.com/user-attachments/assets/13bcb49c-7a54-425e-bff2-f5ce4b1fca49" />
+      <img width="335" alt="image" src="https://github.com/user-attachments/assets/c3764e91-886e-4555-ba37-0ae254d589be" />
+      </p>
+      
+      **cosA= x/r** , **sinA= y/r**
+
+$$
+\begin{bmatrix}
+x\\
+y\\
+\end{bmatrix} =
+\begin{bmatrix}
+rcosA\\
+rsinA\\
+\end{bmatrix}
+$$
+- **Step-2**:-
+  If we rotate the Vector P by able $θ$ , The vector $P$ becomes $P'$, Vector $P'$ has co-ordinates **(x',y')**
+
+$$
+\begin{bmatrix}
+x'\\
+y'\\
+\end{bmatrix} =
+\begin{bmatrix}
+rcos(A+θ)\\
+rsin(A+θ)\\
+\end{bmatrix}
+$$
+
+
+- **Step-3**:-
+  With the Formulae mentioned above we can re-write $P'$
+
+
+$$
+\begin{bmatrix}
+x'\\
+y'\\
+\end{bmatrix} =
+\begin{bmatrix}
+r (cosA cosθ - sinA sinθ)\\
+r (sinA cosθ + cosA sinθ)\\
+\end{bmatrix}
+$$
+ 
+ 
+
+$$
+\begin{bmatrix}
+x'\\
+y'\\
+\end{bmatrix} =
+\begin{bmatrix}
+r cosA cosθ - rsinA sinθ\\
+r sinA cosθ + r cosA sinθ\\
+\end{bmatrix}
+$$
+
+- From **Step-1**, we know **x=rCosA**, **y=rSinA**, if we apply this for $P'$ can be re-written as
+
+$$
+\begin{bmatrix}
+x'\\
+y'\\
+\end{bmatrix} =
+\begin{bmatrix}
+x cosθ - y sinθ\\
+y cosθ + x sinθ\\
+\end{bmatrix}
+$$
+
+$$
+\begin{bmatrix} x' \\
+y' \end{bmatrix} =
+\begin{bmatrix} \cos\theta & -\sin\theta \\
+\sin\theta & \cos\theta \end{bmatrix}
+\begin{bmatrix} x \\ 
+y \end{bmatrix}
+$$
+
+- **Step-4**:-
+  From the above we can observe that when we multiply vector **(x,y)** with Rotation matrix , we can get vector **(x',y')** which is rotated by 
+  angle θ.Hence the matrix below is known as rotation matrix , this is also the populary known as Euler' Formula
+
+  **Euler's Formula** **$$e^i\theta = cos\theta + isin\theta$$**
+
+$$ R(θ) =
+\begin{bmatrix} \cos\theta & -\sin\theta \\ 
+\sin\theta & \cos\theta \end{bmatrix}
+$$
+
+One importatnt point note from here is that we are rotating the vector, the magnitude of the vector remains the same,we are only shifting the vector in the complex **2D** space, this is an important property require for us so that we don't change the original value of the Embeddings.
+
+If we extend this two two vectors **P** & **Q** which makes angle **$\theta_{1}$** & **$\theta_{2}$** with Plane respectively, if we perform dot product(Inner Product) between these two P.Q
+
+$$ P =
+\begin{bmatrix} \cos\theta_{1} & -\sin\theta_{1} \\
+\sin\theta_{1} & \cos\theta_{1} \end{bmatrix}
+\begin{bmatrix} x_{1} \\ 
+y_{1} \end{bmatrix}
+\quad                              
+Q =
+\begin{bmatrix} \cos\theta_{2} & -\sin\theta_{2} \\
+\sin\theta_{2} & \cos\theta_{2} \end{bmatrix}
+\begin{bmatrix} x_{2} \\ 
+y_{2} \end{bmatrix}
+$$       
+
+Let us re-write P and Q as below
+
+$$ P =
+\begin{bmatrix} x_{1}cos\theta_{1} -y_{1}sin\theta_{1} \\
+x_{1}sin\theta_{1} + y_{1}cos\theta_{1} \end{bmatrix}
+\quad
+ Q =
+\begin{bmatrix} x_{2}cos\theta_{2} -y_{2}sin\theta_{2} \\
+x_{2}sin\theta_{2} + y_{2}cos\theta_{2} \end{bmatrix}
+\
+$$    
+
+Inner product between them is P.Q 
+
    
 
 # SELF-ATTENTION
