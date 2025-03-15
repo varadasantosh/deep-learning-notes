@@ -50,7 +50,7 @@ If we can comeup with formula that allows us to encode the position of the token
 
 
 # Rotatory-Embeddings
-   
+   Original Paper:- https://arxiv.org/abs/2104.09864
    https://towardsdatascience.com/understanding-positional-embeddings-in-transformers-from-absolute-to-rotary-31c082e16b26/
    https://aiexpjourney.substack.com/p/an-in-depth-exploration-of-rotary-position-embedding-rope-ac351a45c794
    https://medium.com/@DataDry/decoding-rotary-positional-embeddings-rope-the-secret-sauce-for-smarter-transformers-193cbc01e4ed
@@ -274,7 +274,98 @@ $$
 All of this what we discussed is applicable in 2Dimensional Space, but in practice the LLM have Embedding Dimensions of size 2048 & 3092 etc...
 the Rotary Embedding paper researchers applied the above principals of rotating the vector by multiplying the Rotation matrix R($\theta$) with the pairs of embeddings
 
-   
+For simplicity let us consider the sentence which has 6 tokens , each token has embdding of size 8. As we have the solution to find the relative
+Embeddings in 2D space, we convert this to 2D by dividing the size of the Embedding dimensions by 2 which is 8/2 = 4 , hence we will convert them to 4 pairs of Embeddings and rotate each pair by certain angle, in our current case of 4 pairs, let us consider below vector
+
+$\bar{x}$ = $\left[ x_{1}, x_{2}, x_{3}, x_{4}, x_{5}, x_{6}, x_{7}, x_{8} \right]$
+
+we have 4 Pairs like below
+
+Pair 1:- $\left[ x_{1}, x_{2}\right]$ \
+Pair 2:- $\left[x_{3}, x_{4}\right]$ \
+Pair 3:-  $\left[x_{5}, x_{6}\right]$ \
+Pair 4:-  $\left[x_{7}, x_{8}\right]$ 
+
+Now let us include the position of the token into equation, let us generalize this for any position-**m** , each pair has its own angle, hence we will have d/2 angles, **m** will be same for all the pairs of the token, as mentioned earlier if we have 6 tokens when we are applying rotation for all the pairs of the token **1**, **m** would be **1**, we will also look at the formulae for \theta 
+
+
+$$
+RoPE(x_{m}^1 , x_{m}^2$) =  
+\begin{bmatrix} cosm\theta & -sinm\theta \\
+sinm\theta & cosm\theta \end{bmatrix}
+\begin{bmatrix} x_{m}^1 \\ 
+x_{m}^2 \end{bmatrix}
+$$       
+
+$$
+RoPE(x_{m}^1 , x_{m}^2) =  
+\begin{bmatrix} cosm\theta_{1} & -sinm\theta_{1} \\
+sinm\theta_{1} & cosm\theta_{1} \end{bmatrix}
+\begin{bmatrix} x_{m}^1 \\ 
+x_{m}^2 \end{bmatrix}
+\quad
+RoPE(x_{m}^3 , x_{m}^4) =  
+\begin{bmatrix} cosm\theta_{2} & -sinm\theta_{2} \\
+sinm\theta_{2} & cosm\theta_{2} \end{bmatrix}
+\begin{bmatrix} x_{m}^3 \\ 
+x_{m}^4 \end{bmatrix}
+\quad
+RoPE(x_{m}^5 , x_{m}^6) =  
+\begin{bmatrix} cosm\theta_{3} & -sinm\theta_{3} \\
+sinm\theta_{3} & cosm\theta_{3} \end{bmatrix}
+\begin{bmatrix} x_{m}^5 \\ 
+x_{m}^6 \end{bmatrix}
+\quad
+RoPE(x_{m}^7 , x_{m}^8) =  
+\begin{bmatrix} cosm\theta_{4} & -sinm\theta_{4} \\
+sinm\theta_{4} & cosm\theta_{4} \end{bmatrix}
+\begin{bmatrix} x_{m}^7 \\ 
+x_{m}^8 \end{bmatrix}
+$$    
+
+The above represents calculating Embeddings for Q (Query Matrix), we will understand more about Query matrices in Self Attention, Self Attention also needs K (Key Matrix) , Dot Product between these two matrices gives us the contextual relation ship between the Query vector & Key Vector which represents different tokens in sequence, for us to multiply we should also derive the same RoPE Embeddings for Key matrices , let us represent the position of token as **n** in this case and angle as $\theta$
+
+$$
+RoPE(x_{n}^1 , x_{n}^2) =  
+\begin{bmatrix} cosn\theta & -sinn\theta \\
+sinn\theta & cosn\theta \end{bmatrix}
+\begin{bmatrix} x_{n}^1 \\ 
+x_{n}^2 \end{bmatrix}
+$$ 
+
+Similarly the RoPE for Key vectors is also calculated in 4 Pairs as the embeddings size is 8 and we divide them by 2.
+
+$$
+RoPE(x_{n}^1 , x_{n}^2) =  
+\begin{bmatrix} cosn\theta_{1} & -sinn\theta_{1} \\
+sinn\theta_{1} & cosn\theta_{1} \end{bmatrix}
+\begin{bmatrix} x_{n}^1 \\ 
+x_{n}^2 \end{bmatrix}
+\quad
+RoPE(x_{n}^3 , x_{n}^4) =  
+\begin{bmatrix} cosn\theta_{2} & -sinn\theta_{2} \\
+sinn\theta_{2} & cosn\theta_{2} \end{bmatrix}
+\begin{bmatrix} x_{n}^3 \\ 
+x_{n}^4 \end{bmatrix}
+\quad
+RoPE(x_{n}^5 , x_{n}^6) =  
+\begin{bmatrix} cosn\theta_{3} & -sinn\theta_{3} \\
+sinn\theta_{3} & cosn\theta_{3} \end{bmatrix}
+\begin{bmatrix} x_{n}^5 \\ 
+x_{n}^6 \end{bmatrix}
+\quad
+RoPE(x_{n}^7 , x_{n}^8) =  
+\begin{bmatrix} cosn\theta_{4} & -sinn\theta_{4} \\
+sinn\theta_{4} & cosn\theta_{4} \end{bmatrix}
+\begin{bmatrix} x_{n}^7 \\ 
+x_{n}^8 \end{bmatrix}
+$$    
+
+Query & Key Vectors and their rotations are represented in the Paper as below
+
+$$
+f_{q} (x_{m}, m) = (W_{q} \cdot x_{m}) e^{im\theta}
+$$
 
 # SELF-ATTENTION
    - https://lilianweng.github.io/posts/2018-06-24-attention/
