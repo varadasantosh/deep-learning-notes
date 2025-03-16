@@ -6,7 +6,7 @@
       
      
         
-     - [Rotatory Embeddings](#ROTATORY-EMBEDDINGS)
+     - [Rotatory Embeddings](#Rotatory-Positional-Embeddings)
   - Attention
     - [Self Attention](#SELF-ATTENTION)
     - [Multi Head Attention](#MULTIHEAD-ATTENTION)
@@ -49,7 +49,7 @@ If we can comeup with formula that allows us to encode the position of the token
  
 
 
-# Rotatory-Embeddings
+# Rotatory-Positional-Embeddings
    Original Paper:- https://arxiv.org/abs/2104.09864
    https://towardsdatascience.com/understanding-positional-embeddings-in-transformers-from-absolute-to-rotary-31c082e16b26/
    https://aiexpjourney.substack.com/p/an-in-depth-exploration-of-rotary-position-embedding-rope-ac351a45c794
@@ -473,7 +473,7 @@ def calc_rotary_embeddings(embeddings):
   cos_theta = rotation_theta[...,0::2]
   sin_theta = rotation_theta[...,1::2]
 
-  embeddings[...,0::2] =  embeddings[...,0::2] * cos_theta  + embeddings[...,1::2] * sin_theta
+  embeddings[...,0::2] =  embeddings[...,0::2] * cos_theta  - embeddings[...,1::2] * sin_theta
   embeddings[...,1::2] =  embeddings[...,0::2] * sin_theta  + embeddings[...,1::2] * cos_theta
   return embeddings
 
