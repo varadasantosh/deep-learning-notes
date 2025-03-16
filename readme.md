@@ -286,7 +286,7 @@ Pair 2:- $\left[x_{3}, x_{4}\right]$ \
 Pair 3:-  $\left[x_{5}, x_{6}\right]$ \
 Pair 4:-  $\left[x_{7}, x_{8}\right]$ 
 
-Now let us include the position of the token into equation, let us generalize this for any position-**m** , each pair has its own angle, hence we will have d/2 angles, **m** will be same for all the pairs of the token, as mentioned earlier if we have 6 tokens when we are applying rotation for all the pairs of the token **1**, **m** would be **1**, we will also look at the formulae for \theta 
+Now let us include the position of the token into equation, let us generalize this for any position-**m** , each pair has its own angle, hence we will have d/2 angles, **m** will be same for all the pairs of the token, as mentioned earlier if we have 6 tokens when we are applying rotation for all the pairs of the token **1**, **m** would be **1**, we will also look at the formulae for $\theta$
 
 
 $$
@@ -363,9 +363,129 @@ $$
 
 Query & Key Vectors and their rotations are represented in the Paper as below
 
+
+<div align="center">
+
 $$
-f_{q} (x_{m}, m) = (W_{q} \cdot x_{m}) e^{im\theta}
+f_{q} (x_{m}, m) = (W_{q} \cdot x_{m}) e^{im\theta}  
+\quad \quad
+f_{k} (x_{n}, n) = (W_{k} \cdot x_{n}) e^{in\theta}
 $$
+
+</div>
+
+<div align="center">
+
+$$
+q_{m} = W_{q} \cdot x_{m} \quad \quad \quad k_{n} = W_{k} \cdot x_{n}
+$$
+
+</div>
+
+<div align="center">
+
+$$
+e^{im\theta} = R_{m,\theta} \quad \quad e^{in\theta} = R_{n,\theta}
+$$
+
+</div>
+
+
+
+From **Euler's Formulae** :-
+
+$$
+ e^i\theta = cos\theta + i*sin\theta
+$$
+
+Also we can derive that 
+
+$$
+cos\theta + i*sin\theta = 
+\begin{bmatrix}
+cos\theta & - ysin\theta\\
+cos\theta & sin\theta\\
+\end{bmatrix}
+$$
+
+we can apply this for $R_{m,\theta}$  & $R_{n,\theta}$
+
+We use these two calculate the Attention Scores using $q_{m}$.$k_{n}$
+
+$$q_{m}.k_{n} = (R_{m,\theta}* q ) (R_{n,\theta}*k) = ( q^T R_{m,\theta} R_{n,\theta} k) $$
+
+Earlier we saw multiplication between two vectors which are rotated by $\theta_{1}$ & $\theta_{2}$ results in rotation matrix of angle $\theta_{1}-\theta_{2}$, we can apply the same for our rotation matrix 
+
+$$\quad \quad \quad R_{m,\theta} * R_{n,\theta} = R_{m-n,\theta}$$
+
+
+$$
+Attention Score  = 
+q^T \quad R_{m}^T R_{n} k_= q^T \begin{bmatrix}
+cos(m-n)\theta & - sin(m-n)\theta\\
+cos(m-n)\theta & sin(m-n)\theta\\
+\end{bmatrix}
+\quad
+k
+$$
+
+The above represents the relative positions between Query & Key Vectors (Token Embeddings)
+
+**Rotation for Higher Dimensions is represented in Blocks of 2Dimensional pairs**
+
+![image](https://github.com/user-attachments/assets/a1f6cb96-7181-42e6-b315-ac70d799e762)
+
+The above representation is sparse in nature as only 2 dimensions are active at a given point of time , the paper recommends computationally efficient rotatory matrix multiplication using below representation
+
+![image](https://github.com/user-attachments/assets/59cea45c-f95a-44e5-9843-1e6f42084ddb)
+
+Paper also mentioned the formulae for calculating theta based on each index pair of embedding dimension , where *i* represents the index of the pair, while calculating the angle the position of the token and index of the pair both play a role in determining the angle
+
+$\theta_{i} = 10000^{\frac{2(i-1)}{d}}$
+
+# Pytorch Implementation
+  For step by step explanation please refer to colab [notebook](https://github.com/varadasantosh/deep-learning-notes/blob/tensorflow/Rotary_Embeddings_Implementation.ipynb)
+
+```
+import torch
+
+def determine_rotation_theta(max_seqlen, d_model):
+
+  """ This method takes Sequence Length , Dimensions of Embeddings to calculate the angle for 
+      each position in the sequence
+  """
+  theta = 1/torch.pow(10000,torch.arange(0,d_model,2)/d_model)
+  positions = torch.arange(0,max_seqlen)
+  position_theta = positions.unsqueeze(1) * theta.unsqueeze(0)
+  position_theta = torch.stack((position_theta.cos(),position_theta.sin()),dim=2).flatten(1)
+  return  position_theta
+
+def calc_rotary_embeddings(embeddings):
+
+  """
+      This method takes embeddings, it can be of any dimenesion but in transformer implementaions this takes
+      the dimension of (batch,sequence_len,embed_dimension), it rotates the embedding pairs by certain angle
+      it does not change the magnitude of the dimension, but rotates a vector
+  """
+
+  batch_size,max_seqlen,d_model= embeddings.shape
+  rotation_theta = determine_rotation_theta(max_seqlen,d_model)
+  cos_theta = rotation_theta[...,0::2]
+  sin_theta = rotation_theta[...,1::2]
+
+  embeddings[...,0::2] =  embeddings[...,0::2] * cos_theta  + embeddings[...,1::2] * sin_theta
+  embeddings[...,1::2] =  embeddings[...,0::2] * sin_theta  + embeddings[...,1::2] * cos_theta
+  return embeddings
+
+```
+
+Below image illustrate the shape of the tensor passed as input and the output after applying roatry embeddings
+
+<img width="514" alt="image" src="https://github.com/user-attachments/assets/b1e1fdc8-cbcc-40a1-a211-af7fadd4d2cb" />
+
+
+
+
 
 # SELF-ATTENTION
    - https://lilianweng.github.io/posts/2018-06-24-attention/
