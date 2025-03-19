@@ -2,6 +2,7 @@
   - https://tinkerd.net/blog/machine-learning/distributed-training/
   - https://www.youtube.com/watch?v=toUSzwR0EV8&t=2s
   - https://github.com/huggingface/blog/blob/main/pytorch-fsdp.md
+  - https://blog.clika.io/fsdp-1/
 
 Before exploring the different techniques of Distributed Training, it is essential to understand why it is needed.
 
