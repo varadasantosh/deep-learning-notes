@@ -149,5 +149,8 @@ Two Layers , each with Matrices $W_{1}$, $W_{2}$ with below dimensions
 
 
 
+![image](https://github.com/user-attachments/assets/44b66e5a-1e3a-48e6-8f5a-74c1f1d3bd1e)
+
+
 
 
