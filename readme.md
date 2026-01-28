@@ -1,6 +1,6 @@
 # Transformers
-- [Encoder]
-   - [Embeddings]
+- Encoder
+   - Embeddings
      - [Positional Embeddings](#Positional-Embeddings)
      - [Rotatory Embeddings](#Rotatory-Positional-Embeddings)
   - Attention
