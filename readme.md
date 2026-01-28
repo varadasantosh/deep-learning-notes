@@ -6,7 +6,6 @@
   - Attention
     - [Self Attention](#SELF-ATTENTION)
     - [Multi Head Attention](#MULTIHEAD-ATTENTION)
-    - [Cross Attention](#CROSS-ATTENTION)
     - [Flash Attention](#FLASH-ATTENTION)
 
 
