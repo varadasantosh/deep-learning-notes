@@ -110,12 +110,8 @@
    Choosing the right method depends on the specific requirements and constraints related to model performance, memory
    and computational costs.
 
-
   
-# Speculative Decoding
-# Inference Engines
-  - NVIDIA Triton
-  - VLLM
-  - 
-
+# Few Inference Engines
+  - NVIDIA TensorRT-LLM 
+  - vLLM
 
