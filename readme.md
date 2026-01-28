@@ -2,18 +2,13 @@
 - [Encoder]
    - [Embeddings]
      - [Positional Embeddings](#Positional-Embeddings)
-       
-      
-     
-        
      - [Rotatory Embeddings](#Rotatory-Positional-Embeddings)
   - Attention
     - [Self Attention](#SELF-ATTENTION)
     - [Multi Head Attention](#MULTIHEAD-ATTENTION)
     - [Cross Attention](#CROSS-ATTENTION)
     - [Flash Attention](#FLASH-ATTENTION)
-  - [Layer Normalization](#LAYER-NORMALIZATION)
-  - [FeedForward Layer](#FEED-FORWARD-LAYER)
+
 
 # Encoder
 
@@ -827,10 +822,6 @@ We use the same Model & Input text we considered for Self Attention and look at 
 <img width="511" alt="image" src="https://github.com/user-attachments/assets/d3eb0e3d-7e84-420f-a070-92eb634b45ff" />
 
 
-
-
-# CROSS-ATTENTION
-
 # FLASH-ATTENTION
 
   Flash Attention is IO Aware & Exact Attention. To understand this, we need to be aware of Vanilla Attention (Self-Attention), which is pivotal for Transformer Architecture. Additionally, having some knowledge of GPU Architecture is beneficial.
@@ -908,8 +899,3 @@ We use the same Model & Input text we considered for Self Attention and look at 
    Standard Attention vs Flash Attention from Hugging Face:-
    ------------------
    ![image](https://github.com/user-attachments/assets/8ce6ec2f-2df2-4d5e-b643-598ba3b27097)
-
-
-# LAYER-NORMALIZATION
-
-# FEEDFORWARD LAYER
