@@ -1,7 +1,4 @@
-# References:- 
-- https://developer.nvidia.com/blog/mastering-llm-techniques-inference-optimization/
-- https://training.continuumlabs.ai/inference/why-is-inference-important/paged-attention-and-vllm
-  
+
 # Inference Process:
   The inference process for a Large Language Model (LLM) is divided into two  phases: Prefill and Decode. Each phase has distinct computational requirements based on the specific operations 
   performed during that stage. Below are the high level steps performed during Inference
@@ -110,8 +107,13 @@
    Choosing the right method depends on the specific requirements and constraints related to model performance, memory
    and computational costs.
 
-  
-# Few Inference Engines
+# Few Inference Engines:
   - NVIDIA TensorRT-LLM 
   - vLLM
+  - 
+# References: 
+- https://developer.nvidia.com/blog/mastering-llm-techniques-inference-optimization/
+- https://training.continuumlabs.ai/inference/why-is-inference-important/paged-attention-and-vllm
+
+    
 
