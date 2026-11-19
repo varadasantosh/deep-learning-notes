@@ -593,7 +593,7 @@ Below image illustrate the shape of the tensor passed as input and the output af
              return weighted_values
      ```
 
-     # Visualizing Self Attention using Llama Model:- https://github.com/varadasantosh/deep-learning-notes/blob/tensorflow/Visualize_Self_%26_Multi_Head_Attention.ipynb
+     # Visualizing Self Attention using Llama Model:- https://github.com/varadasantosh/deep-learning-notes/blob/main/transformers/MultiHead_Attention.ipynb
       
       - Download the Llama Model from Hugging Face
 
