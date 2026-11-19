@@ -734,7 +734,7 @@ MultiHead Implemenation in Pytroch:-
 
 ```
 
-Visulization of MultiHead Attention using Llama Model:- https://github.com/varadasantosh/deep-learning-notes/blob/main/Visualize_Self_%26_Multi_Head_Attention.ipynb
+Visulization of MultiHead Attention using Llama Model:- https://github.com/varadasantosh/deep-learning-notes/blob/main/transformers/MultiHead_Attention.ipynb
 -----------------------------
 We use the same Model & Input text we considered for Self Attention and look at one of the Heads of the Last layer in to see if they are able to attend contextual relation ships between different tokens
 
