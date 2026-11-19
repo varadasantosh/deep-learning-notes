@@ -884,7 +884,7 @@ We use the same Model & Input text we considered for Self Attention and look at 
    
   # Few intresting points to note here is the number of FLOPS (Floating point operations) are more in number than the Self Attention , but the time taken is less compared to Self Attention as we are working on small cunks which makes it faster move the data between HBM and On-Chip memory and On-chip Memory to HBM memory , as we are dividing into multiple chunks this also allows us to increase Sequence Lenght which is Context Length of model, hence we can have more context length for the training model. 
 
-  # [Online Softmax Calculation](https://github.com/varadasantosh/deep-learning-notes/blob/tensorflow/Flash_Attention_Calculations(Online_Softmax).ipynb) 
+  # [Online Softmax Calculation](https://github.com/varadasantosh/deep-learning-notes/blob/main/Flash_Attention_Calculations(Online_Softmax).ipynb) 
    
    Reference Links:-
 
